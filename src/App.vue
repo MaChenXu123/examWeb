@@ -1,11 +1,14 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
+
   <router-view/>
 </template>
 
+
+<script lang="ts" setup>
+import { NMessageProvider, NDialogProvider } from "naive-ui";
+// 引入上面你所定义的全局挂载组件
+import GlobalContainer from "@/assets/Global.vue";
+</script>
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
