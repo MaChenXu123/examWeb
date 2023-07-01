@@ -81,7 +81,7 @@ const open = () => {
           openFullScreen2()
         }
         getExam();
-        let targetDate = new Date().getTime() + 100000;
+        let targetDate = new Date().getTime() + 10800000;
         localStorage.setItem("targetDate", targetDate);
 
         ElMessage({

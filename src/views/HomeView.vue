@@ -6,7 +6,6 @@
       </div>
       <div style="flex: 1;">
         <div id="countdown">
-          <!--          {{parseInt(countdownNum.num/3600)}}:{{parseInt(parseInt(countdownNum.num%3600)/60)}}:{{parseInt(countdownNum.num%60)}}-->
         </div>
         <!--        <n-space>-->
         <!--    <span style="font-variant-numeric: tabular-nums">-->
@@ -15,17 +14,17 @@
         <!--        </n-space>-->
       </div>
       <div style="flex: 1">
-        提交
+          <el-button  type="primary" @click="nextExamNum()">提交</el-button>
       </div>
     </div>
-    <div style="display: flex">
+    <div style="display: flex;" class="ex">
       <div class="home">
         <div class="topic">
           <div class="topicNumber">
             {{ store.state.examNum }}
           </div>
           <div v-if="examArray[store.state.examNum-1].oneAndMore===0" style="width: 130px;font-size: 20px;color: red;margin-top: 5px">
-            【单选题】
+              【单选题】
           </div>
           <div v-else style="width: 130px;font-size: 20px ;color: red;margin-top: 5px" >
             【多选题】
@@ -78,26 +77,27 @@ import {updateCssAscolor, updateLine} from '@/js/domJS/HomeView'
 import SelectArray from "./selectArray"
 import store from "@/store";
 import {getExamAxios} from "@/js/netJs/aExamAxios"
+import {ElMessage} from "element-plus";
 
 let examChild = ref(1)
 // 倒计时插件
-// let targetDate = new Date().getTime()+10000;
+let targetDate = new Date().getTime()+10000;
 
 // 倒计时
-// function countdown() {
-//   // let targetDate = new Date("April 28, 2023 00:26:00").getTime();
-//   let currentDate = new Date().getTime();
-//   let timeRemaining = Number(localStorage.getItem("targetDate")) - currentDate;
-//   if (timeRemaining <= 0) {
-//     alert("结束考试 强制退出 ")
-//     return
-//   }
-//   let hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-//   let minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
-//   let seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
-//
-//   document.getElementById("countdown")!.innerHTML = hours + ":" + minutes + ":" + seconds + "";
-// }
+function countdown() {
+  // let targetDate = new Date("April 28, 2023 00:26:00").getTime();
+  let currentDate = new Date().getTime();
+  let timeRemaining = Number(localStorage.getItem("targetDate")) - currentDate;
+  if (timeRemaining <= 0) {
+    alert("结束考试 强制退出 ")
+    return
+  }
+  let hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  let minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+  let seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+  document.getElementById("countdown")!.innerHTML = hours + ":" + minutes + ":" + seconds + "";
+}
 
 
 provide('examChild', examChild);
@@ -172,7 +172,7 @@ function selectArrayUpdateColor(num: any) {
 // })
 
 // 点击选择事件
-function selected(index: number, n: any): void {
+function selected(index: number): void {
   //如果点击时候是已经被选择了就把是否选中属性变为false
   if (selectArrayReactive.arr[index].ifClick == true) {
     //修改是否选中
@@ -188,6 +188,18 @@ function selected(index: number, n: any): void {
   }
 // 同上
   if (selectArrayReactive.arr[index].ifClick == false) {
+      //用来提示单选题多选的情况
+      if (examArray[store.state.examNum-1].oneAndMore===0){
+          for (let i = 0; i <selectArrayReactive.arr.length ; i++) {
+              if (selectArrayReactive.arr[i].ifClick==true){
+                  ElMessage({
+                      type: 'warning',
+                      message: '这是单选题',
+                  })
+                  return;
+              }
+          }
+      }
     selectArrayReactive.arr[index].ifClick = true
     localStorage.setItem("examList",JSON.stringify(examArray));
     let selectJH: string = "select" + (index + 1)
@@ -200,8 +212,8 @@ function selected(index: number, n: any): void {
 onMounted(() => {
   updateSelectColor();
   setUpSelectArrayColor();
-  // countdown();
-  // setInterval(countdown, 1000);
+  countdown();
+  setInterval(countdown, 1000);
 })
 onUpdated(() => {
   updateSelectColor()
@@ -230,7 +242,7 @@ function setUpSelectArrayColor() {
 
 <style scoped lang="scss">
 .top {
-  background-color: #42b983;
+  background-color: #498cf0;
   height: 50px;
 
   div {
@@ -256,7 +268,7 @@ function setUpSelectArrayColor() {
     border-bottom: 1px solid black;
 
     .topicNumber {
-      width: 30px;
+      width: 35px;
       height: 30px;
       border-radius: 50%;
       background-color: #498cf0;
@@ -329,5 +341,8 @@ function setUpSelectArrayColor() {
 
 .selectTrue {
   background-color: burlywood;
+}
+.ex{
+  margin: auto;
 }
 </style>
